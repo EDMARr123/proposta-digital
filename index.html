@@ -1705,7 +1705,8 @@ function syncInputs(){
   for(var i=0;i<ins.length;i++){
     var input=ins[i], code=input.getAttribute('data-code');
     var n=parseQty(qty[code]||0);
-    if(document.activeElement!==input) input.value=n>0?fmtNum(n):'';
+    var shown=(typeof unitKg==='function'&&unitKg(code)>0)?Math.round(n/unitKg(code)*100)/100:n;
+    if(document.activeElement!==input) input.value=n>0?fmtNum(shown):'';
     input.classList.toggle('active',n>0);
   }
 }
@@ -1713,6 +1714,7 @@ function setQtyDirect(code,value){
   var p=MAP[code];
   if(!p)return;
   var n=parseQty(value);
+  if(typeof unitKg==='function'&&unitKg(code)>0) n=Math.round(n*unitKg(code)*1000)/1000;
   if(n<=0) delete qty[code]; else qty[code]=n;
   save();
 }
@@ -1720,6 +1722,7 @@ function stepQty(code,direction){
   var p=MAP[code];
   if(!p)return;
   var step=p.fracionado ? Number(p.fracStepKg) : Number(p.boxKg);
+  if(typeof unitKg==='function'&&unitKg(code)>0) step=unitKg(code);
   var n=parseQty(qty[code]||0)+(direction*step);
   if(n<0)n=0;
   n=Math.round(n*1000)/1000;
@@ -2252,6 +2255,19 @@ document.getElementById('resumirBtn').addEventListener('click',function(){
   resumido=!resumido; aplicarResumo();
   try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}
 });
+
+function propostaEmUnidade(){
+  var cards=document.querySelectorAll('#catalog .product');
+  for(var i=0;i<cards.length;i++){
+    var code=cards[i].getAttribute('data-code'), uk=unitKg(code);
+    if(!uk) continue;
+    var lab=cards[i].querySelector('.prop-label'); if(lab) lab.textContent='Proposta (UN)';
+    var inp=cards[i].querySelector('.qty-input'); if(inp){ inp.setAttribute('aria-label','Quantidade em unidades'); inp.setAttribute('inputmode','numeric'); }
+    var p=MAP[code], hint=cards[i].querySelector('.qty-hint');
+    if(hint&&p) hint.textContent='+ / − 1 UN · caixa = '+fmtNum(Math.round(Number(p.boxKg)/uk))+' un';
+  }
+}
+propostaEmUnidade();
 save();
 savePrices();
 saveStock();
