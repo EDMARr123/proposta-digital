@@ -1,1 +1,6 @@
 *.py
+*.json
+!manifest.webmanifest
+lista.txt
+index_antes_*.html
+t_*.png
