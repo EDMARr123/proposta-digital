@@ -1858,7 +1858,7 @@ function renderSelected(){
       (priceKg(p.codigo)>0
         ?'<div class="summary-price-line"><strong>R$ '+fmtMoney(priceKg(p.codigo))+'/KG'+
            (unitKg(p.codigo)>0?' · R$ '+fmtMoney(unitPriceOf(p.codigo))+'/UN':'')+
-           '</strong><span>Total: R$ '+fmtMoney(priceKg(p.codigo)*kg)+'</span></div>'
+           '</strong></div>'
         :'')+
       '<div class="qty">'+
         '<button type="button" data-qty="-1" data-code="'+p.codigo+'">−</button>'+
@@ -2075,7 +2075,6 @@ function copyCodes(){
     if(unitPrice>0){
       if(unitKg(p.codigo)>0) line+=' ('+fmtNum(Math.round(unitsOf(p.codigo,kg)*100)/100)+' UN) - R$ '+fmtMoney(unitPriceOf(p.codigo))+'/UN';
       line+=' - R$ '+fmtMoney(unitPrice)+'/KG';
-      line+=' - TOTAL R$ '+fmtMoney(itemTotal);
       grandTotal+=itemTotal;
       pricedCount++;
     }
@@ -2086,10 +2085,7 @@ function copyCodes(){
   if(pricedCount>0){
     lines.push('');
     if(pricedCount===selected.length){
-      lines.push('VALOR TOTAL: R$ '+fmtMoney(grandTotal));
     }else{
-      lines.push('VALOR TOTAL: R$ '+fmtMoney(grandTotal));
-      lines.push((selected.length-pricedCount)+' item(ns) sem preço.');
     }
   }
 
@@ -2168,7 +2164,6 @@ function printOrder(){
       '<td class="num">'+fmtCx(cx)+'</td>'+
       '<td class="num">'+fmtNum(kg)+(unitKg(p.codigo)>0?'<br><small>'+fmtNum(Math.round(unitsOf(p.codigo,kg)*100)/100)+' un</small>':'')+'</td>'+
       '<td class="num">'+(unitPrice>0?'R$ '+fmtMoney(unitPrice)+(unitKg(p.codigo)>0?'<br><small>R$ '+fmtMoney(unitPriceOf(p.codigo))+'/un</small>':''):'—')+'</td>'+
-      '<td class="num">'+(unitPrice>0?'R$ '+fmtMoney(itemTotal):'—')+'</td>'+
     '</tr>';
   }
 
@@ -2192,21 +2187,16 @@ function printOrder(){
     '<table>'+
       '<thead><tr>'+
         '<th style="width:10%">Código</th>'+
-        '<th style="width:33%">Produto</th>'+
+        '<th style="width:48%">Produto</th>'+
         '<th style="width:10%;text-align:center">Estoque UN</th>'+
         '<th style="width:7%;text-align:center">Prop. CX</th>'+
         '<th style="width:7%;text-align:center">Prop. KG</th>'+
-        '<th style="width:15%;text-align:center">R$/KG</th>'+
-        '<th style="width:20%;text-align:center">Total</th>'+
+        '<th style="width:20%;text-align:center">R$/KG</th>'+
       '</tr></thead>'+
       '<tbody>'+rows+'</tbody>'+
     '</table>'+
     '<div class="ptotal">'+selected.length+' item(ns) na proposta'+
-      (totalLabel?' &nbsp; | &nbsp; '+totalLabel:'')+
     '</div>'+
-    (pricedCount>0 && pricedCount<selected.length
-      ?'<div class="pnote"><strong>Atenção:</strong> itens sem preço não entram no valor parcial.</div>'
-      :'')+
     (note?'<div class="pnote"><strong>Observação:</strong><br>'+esc(note)+'</div>':'')+
     '<div class="pfooter">Proposta de pedido<br>Itens sujeitos à disponibilidade e às condições comerciais vigentes.</div>';
 
