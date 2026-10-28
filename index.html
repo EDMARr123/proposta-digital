@@ -700,6 +700,13 @@ article.product .unit-hint{font-size:10px}
 .sum-linha small,.sum-linha strong{color:#14181f}
 .sum-linha.est small,.sum-linha.est strong{color:#c8102e}
 .sum-linha.pun strong{color:#15803d}
+/* preço editável no resumo (mesmos campos price-input/unit-input do cartão: muda nos dois) */
+.sum-preco{display:flex;align-items:center;gap:6px;flex:0 0 auto;border:1.5px solid #cfd8e3;border-radius:10px;padding:0 10px;background:#fff}
+.sum-preco:focus-within{border-color:#c8102e;box-shadow:0 0 0 3px rgba(200,16,46,.15)}
+.sum-preco b{font-size:15px;font-weight:900;color:#14181f}
+.sum-linha .sum-in,.sum-linha .sum-in.active{width:96px;height:40px;padding:0;border:0;background:transparent;
+  font-size:19px;font-weight:900;text-align:right;color:#14181f}
+.sum-linha.pun .sum-preco b,.sum-linha.pun .sum-in,.sum-linha.pun .sum-in.active{color:#15803d}
 </style>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="icons/apple-touch-icon.png" rel="apple-touch-icon"/>
@@ -2289,9 +2296,9 @@ function renderSelected(){
       '<div class="sum-lista">'+
         '<div class="sum-linha est"><small>Estoque cliente UN</small><strong>'+fmtNum(stockOf(p.codigo))+'</strong></div>'+
         '<div class="sum-linha prop"><small>Proposta</small><strong>'+fmtCx(cx)+' cx / '+fmtNum(kg)+' kg</strong></div>'+
-        '<div class="sum-linha pkg"><small>Preço/kg</small><strong>'+(priceKg(p.codigo)>0?'R$ '+fmtMoney(priceKg(p.codigo)):'-')+'</strong></div>'+
+        '<div class="sum-linha pkg"><small>Preço/kg</small><span class="sum-preco"><b>R$</b><input class="price-input sum-in" data-code="'+p.codigo+'" type="text" inputmode="decimal" placeholder="0,00" value="'+(priceKg(p.codigo)>0?fmtMoney(priceKg(p.codigo)):'')+'" aria-label="Preço por kg do produto '+p.codigo+'"/></span></div>'+
         (unitKg(p.codigo)>0
-          ?'<div class="sum-linha pun"><small>Preço/unidade ('+fmtNum(unitKg(p.codigo)*1000)+' g)</small><strong>'+(priceKg(p.codigo)>0?'R$ '+fmtMoney(unitPriceOf(p.codigo)):'-')+'</strong></div>'
+          ?'<div class="sum-linha pun"><small>Preço/unidade ('+fmtNum(unitKg(p.codigo)*1000)+' g)</small><span class="sum-preco"><b>R$</b><input class="unit-input sum-in" data-code="'+p.codigo+'" type="text" inputmode="decimal" placeholder="0,00" value="'+(unitPriceOf(p.codigo)>0?fmtMoney(unitPriceOf(p.codigo)):'')+'" aria-label="Preço por unidade do produto '+p.codigo+'"/></span></div>'
           :'')+
       '</div>'+
       '<div class="qty">'+
