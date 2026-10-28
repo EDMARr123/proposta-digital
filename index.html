@@ -736,6 +736,19 @@ header .app-title-sub{display:none}   /* sem o nome "Richard Fernandes" (pedido 
   header .app-icon{width:48px;height:48px}
   header .app-title-main{font-size:clamp(19px,6vw,26px);white-space:nowrap}
 }
+/* 28/10: cada produto do catálogo num quadro próprio, com borda verde fina (como o Edmar marcou) */
+#catalog details.section .products{padding:4px 10px 10px}
+#catalog article.product{border:1.5px solid #22a05a;border-radius:14px;margin:10px 0;background:#fff}
+/* celular estreito: menos margem para o campo do estoque não ficar espremido */
+@media(max-width:420px){
+  #catalog .department[data-local]{padding:7px}
+  #catalog details.section .products{padding:2px 4px 6px}
+  #catalog article.product{padding:9px 8px;gap:7px;grid-template-columns:54px minmax(0,1fr) 134px}
+  #catalog article.product > .stock-row{padding:7px 6px 6px}
+  #catalog .stock-ctrl{grid-template-columns:38px minmax(46px,1fr) 38px;gap:4px}
+  #catalog .stock-step{height:44px;font-size:22px}
+  #catalog article.product > .stock-row .stock-input{height:44px;font-size:22px;padding:2px}
+}
 </style>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="icons/apple-touch-icon.png" rel="apple-touch-icon"/>
