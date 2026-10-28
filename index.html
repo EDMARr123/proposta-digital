@@ -2462,7 +2462,7 @@ function textoProposta(){
   var selected=selectedCodes();
   if(!selected.length){ alert('Nenhum produto selecionado.'); return null; }
   var cli=(document.getElementById('clientName')||{}).value||'';
-  var lines=['*PROPOSTA - '+new Date().toLocaleDateString('pt-BR')+'*'];
+  var lines=['*PROPOSTA FRIATO - '+new Date().toLocaleDateString('pt-BR')+'*'];
   if(cli.trim()) lines.push('Cliente: '+cli.trim());
   for(var i=0;i<selected.length;i++){
     var p=MAP[selected[i]];
