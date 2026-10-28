@@ -687,6 +687,20 @@ article.product .unit-hint{font-size:10px}
   article.product .price-entry{height:46px}
   article.product .price-input,article.product .unit-input{height:42px;font-size:20px}
 }
+
+/* 27/10: resumo da proposta em lista (estoque, proposta, preço/kg, preço/unidade) */
+.sum-lista{display:flex;flex-direction:column;gap:6px;margin:10px 0 8px}
+.sum-linha{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:12px;
+  border:1.5px solid #e3e8ef;background:#f6f8fb}
+.sum-linha small{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.02em;color:#5b6576}
+.sum-linha strong{font-size:18px;font-weight:900;color:#14181f;white-space:nowrap}
+.sum-linha.est{border-color:#9fd5b4;background:#effaf3}
+.sum-linha.est small,.sum-linha.est strong{color:#14532d}
+.sum-linha.prop strong{color:#c8102e}
+.sum-linha.pkg{border-color:#f0a9b5;background:#fff}
+.sum-linha.pkg small,.sum-linha.pkg strong{color:#c8102e}
+.sum-linha.pun{border-color:#c4b0f0;background:#faf7ff}
+.sum-linha.pun small,.sum-linha.pun strong{color:#6d28d9}
 </style>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="icons/apple-touch-icon.png" rel="apple-touch-icon"/>
@@ -2273,19 +2287,14 @@ function renderSelected(){
       '<div class="summary-pack">Caixa: '+fmtNum(p.boxKg)+' KG'+
         (p.fracionado?'<span class="summary-frac">FRACIONADO '+fmtNum(p.fracStepKg)+' KG</span>':'')+
       '</div>'+
-      '<div class="summary-metrics">'+
-        '<div class="summary-metric"><small>Estoque cliente UN</small><strong>'+fmtNum(stockOf(p.codigo))+'</strong></div>'+
-        '<div class="summary-metric"><small>Proposta CX</small><strong>'+fmtCx(cx)+'</strong></div>'+
-        '<div class="summary-metric"><small>Proposta KG</small><strong>'+fmtNum(kg)+'</strong></div>'+
+      '<div class="sum-lista">'+
+        '<div class="sum-linha est"><small>Estoque cliente UN</small><strong>'+fmtNum(stockOf(p.codigo))+'</strong></div>'+
+        '<div class="sum-linha prop"><small>Proposta</small><strong>'+fmtCx(cx)+' cx / '+fmtNum(kg)+' kg</strong></div>'+
+        '<div class="sum-linha pkg"><small>Preço/kg</small><strong>'+(priceKg(p.codigo)>0?'R$ '+fmtMoney(priceKg(p.codigo)):'-')+'</strong></div>'+
+        (unitKg(p.codigo)>0
+          ?'<div class="sum-linha pun"><small>Preço/unidade ('+fmtNum(unitKg(p.codigo)*1000)+' g)</small><strong>'+(priceKg(p.codigo)>0?'R$ '+fmtMoney(unitPriceOf(p.codigo)):'-')+'</strong></div>'
+          :'')+
       '</div>'+
-      (unitKg(p.codigo)>0 && kg>0
-        ?'<div class="summary-stock" style="color:#4c1d95">Proposta: '+fmtNum(Math.round(unitsOf(p.codigo,kg)*100)/100)+' un de '+fmtNum(unitKg(p.codigo)*1000)+' g</div>'
-        :'')+
-      (priceKg(p.codigo)>0
-        ?'<div class="summary-price-line"><strong>R$ '+fmtMoney(priceKg(p.codigo))+'/KG'+
-           (unitKg(p.codigo)>0?' · R$ '+fmtMoney(unitPriceOf(p.codigo))+'/UN':'')+
-           '</strong></div>'
-        :'')+
       '<div class="qty">'+
         '<button type="button" data-qty="-1" data-code="'+p.codigo+'">−</button>'+
         '<span>'+fmtNum(n)+' kg</span>'+
