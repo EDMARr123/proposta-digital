@@ -2449,42 +2449,27 @@ async function shareCurrentImage(){
     }catch(err){}
   }
 }
+function nomeCurto(d){
+  var t=String(d||'').replace(/\([^)]*\)/g,' ').replace(/\s+/g,' ').trim(), a;
+  do{ a=t; t=t.replace(/\s*(CX\s*)?\d+([.,]\d+)?\s*(KGS?|GR?|UN)\.?$/i,'').replace(/\s*-$/,'').trim(); }while(t!==a);
+  return t||d;
+}
 function copyCodes(){
   var selected=selectedCodes();
   if(!selected.length)return alert('Nenhum produto selecionado.');
-
-  var lines=[];
-  var grandTotal=0;
-  var pricedCount=0;
-
+  var cli=(document.getElementById('clientName')||{}).value||'';
+  var lines=['*PROPOSTA - '+new Date().toLocaleDateString('pt-BR')+'*'];
+  if(cli.trim()) lines.push('Cliente: '+cli.trim());
   for(var i=0;i<selected.length;i++){
     var p=MAP[selected[i]];
     if(!p)continue;
-
-    var kg=kgTotal(p,qty[p.codigo]||0);
-    var unitPrice=priceKg(p.codigo);
-    var itemTotal=unitPrice>0 ? unitPrice*kg : 0;
-
-    var line=p.codigo+' '+p.descricao+' - ESTOQUE '+fmtNum(stockOf(p.codigo))+' UN ('+fmtNum(stockKg(p.codigo))+' KG) - PROPOSTA '+fmtNum(kg)+' KG';
-
-    if(unitPrice>0){
-      if(unitKg(p.codigo)>0) line+=' ('+fmtNum(Math.round(unitsOf(p.codigo,kg)*100)/100)+' UN) - R$ '+fmtMoney(unitPriceOf(p.codigo))+'/UN';
-      line+=' - R$ '+fmtMoney(unitPrice)+'/KG';
-      grandTotal+=itemTotal;
-      pricedCount++;
-    }
-
-    lines.push(line);
-  }
-
-  if(pricedCount>0){
+    var kg=kgTotal(p,qty[p.codigo]||0), pr=priceKg(p.codigo), uk=unitKg(p.codigo), st=stockOf(p.codigo);
     lines.push('');
-    if(pricedCount===selected.length){
-    }else{
-    }
+    lines.push('*'+p.codigo+' - '+nomeCurto(p.descricao)+'*');
+    lines.push('Estoque: '+fmtNum(st)+' un'+(st>0?' ('+fmtNum(stockKg(p.codigo))+' kg)':''));
+    lines.push('Proposta: '+fmtNum(kg)+' kg'+(uk>0&&kg>0?' ('+fmtNum(Math.round(unitsOf(p.codigo,kg)*100)/100)+' un)':''));
+    if(pr>0) lines.push('Preço: R$ '+fmtMoney(pr)+'/kg'+(uk>0?' (R$ '+fmtMoney(unitPriceOf(p.codigo))+'/un)':''));
   }
-
-  lines.unshift('PROPOSTA - '+new Date().toLocaleDateString('pt-BR'),'');
   var t=lines.join('\n');
 
   if(navigator.clipboard&&window.isSecureContext){
