@@ -725,6 +725,17 @@ article.product .unit-hint{font-size:10px}
 header .search{display:none!important}
 /* 28/10: sem o texto de explicação ("Todos os produtos trabalham em KG...") */
 main > p.tip{display:none!important}
+/* 28/10: título do topo centralizado e maior (logo à esquerda, espaço igual à direita) */
+header .app-brand{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:8px}
+header .app-icon{width:56px;height:56px}
+header .app-title{text-align:center}
+header .app-title-main{font-size:30px;letter-spacing:.02em;line-height:1.1}
+header .app-title-sub{display:none}   /* sem o nome "Richard Fernandes" (pedido do Edmar) */
+@media(max-width:430px){
+  header .app-brand{grid-template-columns:48px 1fr 48px}
+  header .app-icon{width:48px;height:48px}
+  header .app-title-main{font-size:clamp(19px,6vw,26px);white-space:nowrap}
+}
 </style>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="icons/apple-touch-icon.png" rel="apple-touch-icon"/>
