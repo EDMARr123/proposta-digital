@@ -2471,8 +2471,8 @@ function textoProposta(){
     lines.push('');
     lines.push('*'+p.codigo+' - '+nomeCurto(p.descricao)+'*');
     lines.push('Estoque: '+fmtNum(st)+' un'+(st>0?' ('+fmtNum(stockKg(p.codigo))+' kg)':''));
-    lines.push('Proposta: '+(kg>0?fmtCx(cxTotal(p,parseQty(qty[p.codigo]||0)))+' cx = '+fmtNum(kg)+' kg'+
-      (uk>0?' ('+fmtNum(Math.round(unitsOf(p.codigo,kg)*100)/100)+' un)':''):'0'));
+    lines.push('Proposta: '+(kg>0?fmtCx(cxTotal(p,parseQty(qty[p.codigo]||0)))+' cx / '+fmtNum(kg)+' kg'+
+      (uk>0?' / '+fmtNum(Math.round(unitsOf(p.codigo,kg)*100)/100)+' un':''):'0'));
     if(pr>0) lines.push('Preço: R$ '+fmtMoney(pr)+'/kg'+(uk>0?' (R$ '+fmtMoney(unitPriceOf(p.codigo))+'/un)':''));
   }
   return lines.join('\n');
