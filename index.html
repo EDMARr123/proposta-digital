@@ -668,6 +668,25 @@ article.product > .stock-row .stock-hint{font-size:11px;text-align:left}
 .aviso-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 .aviso-toast b{display:block;font-size:26px;font-weight:900;color:#c8102e;letter-spacing:.04em}
 .aviso-toast span{display:block;margin-top:6px;font-size:17px;font-weight:800;color:#3a2a00;line-height:1.3}
+
+/* 27/10: preço/kg e preço/unidade maiores, em destaque */
+article.product{grid-template-columns:70px minmax(0,1fr) 168px}
+article.product .price-row{margin-top:8px;gap:4px}
+article.product .price-row label{font-size:12px;font-weight:900;color:#c8102e;text-transform:uppercase;letter-spacing:.02em}
+article.product .unit-row label{color:#6d28d9}
+article.product .price-entry{height:48px;border:2px solid #f0a9b5;border-radius:12px;background:#fff}
+article.product .unit-entry{border-color:#c4b0f0;background:#faf7ff}
+article.product .price-entry span{font-size:14px;font-weight:900;padding-left:9px;color:#c8102e}
+article.product .unit-entry span{color:#6d28d9}
+article.product .price-input,article.product .unit-input{height:44px;font-size:22px;font-weight:900;padding:3px 9px 3px 4px}
+article.product .price-input:focus,article.product .unit-input:focus{background:#fff6f7}
+article.product .unit-hint{font-size:10px}
+@media(max-width:430px){
+  article.product{grid-template-columns:62px minmax(0,1fr) 148px}
+  article.product .price-row label{font-size:11px}
+  article.product .price-entry{height:46px}
+  article.product .price-input,article.product .unit-input{height:42px;font-size:20px}
+}
 </style>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="icons/apple-touch-icon.png" rel="apple-touch-icon"/>
