@@ -689,6 +689,9 @@ article.product .unit-hint{font-size:10px}
 }
 
 /* 27/10: resumo da proposta em lista (estoque, proposta, preço/kg, preço/unidade) */
+.sum-topo{display:flex;align-items:center;gap:10px}
+.sum-local{display:inline-block;padding:3px 11px;border-radius:999px;background:#c8102e;color:#fff;font-size:12px;font-weight:900;letter-spacing:.04em}
+.sum-local:empty{display:none}
 .sum-desc{display:inline-block;margin-top:2px;font-size:14px;font-weight:800;color:#14181f;line-height:1.3}
 .sum-lista{display:flex;flex-direction:column;gap:6px;margin:10px 0 8px}
 .sum-linha{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:12px;
@@ -2303,7 +2306,7 @@ function renderSelected(){
     var kg=kgTotal(p,n);
 
     o+='<div class="selected-row">'+
-      '<strong>'+p.codigo+'</strong><br>'+
+      '<div class="sum-topo"><strong>'+p.codigo+'</strong><span class="sum-local">'+(({ILHA:'ILHA',GELADEIRA:'GELADEIRA',DEFUMADOS:'DEFUMADOS',BALCAO:'BALCÃO'})[p.local]||'')+'</span></div>'+
       '<span class="sum-desc">'+esc(p.descricao)+'</span>'+
       '<div class="summary-pack">Caixa: '+fmtNum(p.boxKg)+' KG'+
         (p.fracionado?'<span class="summary-frac">FRACIONADO '+fmtNum(p.fracStepKg)+' KG</span>':'')+
