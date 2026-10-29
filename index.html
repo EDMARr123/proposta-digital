@@ -2268,7 +2268,16 @@ function selectedCodes(){
   for(var c2 in stock){
     if(Object.prototype.hasOwnProperty.call(stock,c2) && parseQty(stock[c2])>0 && arr.indexOf(c2)<0) arr.push(c2);
   }
-  return arr;
+  return arr.sort(function(a,b){ return ordemCatalogo(a)-ordemCatalogo(b); });
+}
+var ORDEM_CAT=null;
+function ordemCatalogo(code){
+  if(!ORDEM_CAT){
+    ORDEM_CAT={};
+    var cs=document.querySelectorAll('#catalog article.product');
+    for(var i=0;i<cs.length;i++) ORDEM_CAT[cs[i].getAttribute('data-code')]=i;
+  }
+  var n=ORDEM_CAT[code]; return n==null?1e6:n;
 }
 function kgTotal(p,n){
   return parseQty(n);
@@ -2544,8 +2553,8 @@ async function shareCurrentImage(){
   }
 }
 function nomeCurto(d){
-  var t=String(d||'').replace(/\([^)]*\)/g,' ').replace(/\s+/g,' ').trim(), a;
-  do{ a=t; t=t.replace(/\s*(CX\s*)?\d+([.,]\d+)?\s*(KGS?|GR?|UN)\.?$/i,'').replace(/\s*-$/,'').trim(); }while(t!==a);
+  var t=String(d||'').replace(/\([^)]*\)/g,' ').replace(/\([^)]*$/,' ').replace(/\s+/g,' ').trim(), a;
+  do{ a=t; t=t.replace(/\s*(CX\s*)?\d+([.,]\d+)?\s*(KGS?|GR?|UN)\.?$/i,'').replace(/\s*\d+([.,]\d+)?\s*X(\s*\d+([.,]\d+)?)?$/i,'').replace(/\s*-$/,'').trim(); }while(t!==a);
   return t||d;
 }
 function textoProposta(){
