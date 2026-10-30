@@ -754,21 +754,6 @@ header .app-title-sub{display:none}   /* sem o nome "Richard Fernandes" (pedido 
   #catalog .stock-step{height:44px;font-size:22px}
   #catalog article.product > .stock-row .stock-input{height:44px;font-size:22px;padding:2px}
 }
-
-/* 30/10: abrir todas as seções — etiqueta FALTA ABRIR / ✓ e aviso */
-#catalog details.section > summary > span::after{content:"FALTA ABRIR";display:inline-block;margin-left:8px;padding:2px 7px;border-radius:999px;
-  background:#c8102e;color:#fff;font-size:10.5px;font-weight:900;letter-spacing:.03em;vertical-align:2px}
-#catalog details.section.sec-vista > summary > span::after{content:"✓";background:#e7f6ec;color:#16803c;font-size:13px;padding:0 7px}
-.falta-sec{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.35)}
-.falta-sec.show{display:flex}
-.falta-box{width:380px;max-width:100%;max-height:80vh;overflow:auto;background:#fff;border:3px solid #c8102e;border-radius:18px;
-  padding:16px 18px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.35)}
-.falta-box b{display:block;font-size:22px;font-weight:900;color:#c8102e;letter-spacing:.02em}
-.falta-box p{margin:6px 0 0;font-size:13px;font-weight:700;color:#5b4a45}
-.falta-box strong{display:block;margin-top:12px;font-size:24px;font-weight:900;color:#241a17;line-height:1.2}
-.falta-box i{display:block;margin-top:4px;font-style:normal;font-size:12px;font-weight:900;color:#c8102e;letter-spacing:.05em}
-.falta-box button{position:sticky;bottom:0;margin-top:14px;min-height:44px;width:100%;border:0;border-radius:12px;background:#c8102e;color:#fff;
-  font:inherit;font-size:16px;font-weight:900;box-shadow:0 -8px 12px #fff}
 </style>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="icons/apple-touch-icon.png" rel="apple-touch-icon"/>
@@ -2975,85 +2960,6 @@ document.addEventListener('click',function(e){
   clearTimeout(t._tm); t.classList.add('show');
   t._tm=setTimeout(function(){ t.classList.remove('show'); },2000);
 });
-
-/* 30/10: o vendedor tem que abrir todas as seções */
-var SEC_KEY='prop_secoes_v1', secAbertas={}, secSilencio=false;
-try{ secAbertas=JSON.parse(localStorage.getItem(SEC_KEY)||'{}')||{}; }catch(e){ secAbertas={}; }
-function salvarSecoes(){ try{ localStorage.setItem(SEC_KEY,JSON.stringify(secAbertas)); }catch(e){} }
-var NOME_LOCAL={ILHA:'ILHA',GELADEIRA:'GELADEIRA',DEFUMADOS:'DEFUMADOS E MORTADELA',BALCAO:'BALCÃO'};
-function secLocal(d){ var dep=d.parentNode; return dep&&dep.getAttribute?(dep.getAttribute('data-local')||''):''; }
-function secNome(d){ var sp=d.querySelector('summary > span'); return sp?sp.textContent.trim():''; }
-function secId(d){ return secLocal(d)+'|'+secNome(d); }
-function marcarSecoes(){
-  var ds=document.querySelectorAll('#catalog details.section');
-  for(var i=0;i<ds.length;i++) ds[i].classList.toggle('sec-vista',!!secAbertas[secId(ds[i])]);
-}
-function secoesFaltando(local){
-  var ds=document.querySelectorAll('#catalog details.section'), out=[];
-  for(var i=0;i<ds.length;i++) if((!local||secLocal(ds[i])===local) && !secAbertas[secId(ds[i])]) out.push(ds[i]);
-  return out;
-}
-/* mostra UMA seção por vez (pedido do Edmar: "um por um") */
-function mostrarFalta(d,texto,fixo){
-  var t=document.getElementById('faltaSecao');
-  if(!t){
-    t=document.createElement('div'); t.id='faltaSecao'; t.className='falta-sec'; t.setAttribute('role','alert');
-    t.addEventListener('click',function(e){ if(e.target===t||e.target.tagName==='BUTTON') t.classList.remove('show'); });
-    document.body.appendChild(t);
-  }
-  var l=secLocal(d);
-  t.innerHTML='<div class="falta-box"><b>⚠️ FALTA ABRIR A SEÇÃO</b><strong>'+secNome(d)+'</strong><i>'+(NOME_LOCAL[l]||l)+'</i>'+
-    (texto?'<p>'+texto+'</p>':'')+'<button type="button">OK</button></div>';
-  clearTimeout(t._tm); t.classList.add('show');
-  if(!fixo) t._tm=setTimeout(function(){ t.classList.remove('show'); },3500);
-}
-/* próxima seção sem abrir no mesmo local: primeiro as de baixo, depois as de cima */
-function proximaFalta(d){
-  var f=secoesFaltando(secLocal(d)); if(!f.length) return null;
-  for(var i=0;i<f.length;i++) if(d.compareDocumentPosition(f[i]) & Node.DOCUMENT_POSITION_FOLLOWING) return f[i];
-  return f[0];
-}
-(function(){
-  var ds=document.querySelectorAll('#catalog details.section');
-  for(var i=0;i<ds.length;i++) ds[i].addEventListener('toggle',function(){
-    if(this.open){ secAbertas[secId(this)]=1; salvarSecoes(); this.classList.add('sec-vista'); return; }
-    if(secSilencio) return;
-    var p=proximaFalta(this);   /* fechou a seção: avisa a próxima que falta */
-    if(p) mostrarFalta(p,'',false);
-  });
-  marcarSecoes();
-})();
-/* ao fechar um local com seção sem abrir */
-document.addEventListener('click',function(e){
-  var b=e.target.closest?e.target.closest('.local-card'):null;
-  if(!b||b.parentNode.classList.contains('aberto')) return;
-  var f=secoesFaltando(b.parentNode.getAttribute('data-local'));
-  if(f.length) mostrarFalta(f[0],'',false);
-});
-/* WhatsApp só depois de abrir todas */
-document.addEventListener('click',function(e){
-  if(!e.target.closest||!e.target.closest('#sendText')) return;
-  var f=secoesFaltando('');
-  if(!f.length) return;
-  e.preventDefault(); e.stopPropagation();
-  mostrarFalta(f[0],'Abra todas as seções antes de enviar a proposta.',true);
-},true);
-/* Nova visita confirmada: zera as seções abertas */
-document.addEventListener('click',function(e){
-  if(!e.target.closest||!e.target.closest('#newVisit')) return;
-  var orig=window.confirm;
-  window.confirm=function(m){
-    var r=orig.call(window,m);
-    if(r){
-      secAbertas={}; salvarSecoes(); secSilencio=true;   /* fecha tudo sem disparar aviso */
-      var ds=document.querySelectorAll('#catalog details.section');
-      for(var i=0;i<ds.length;i++) ds[i].open=false;
-      setTimeout(function(){ marcarSecoes(); secSilencio=false; },400);
-    }
-    return r;
-  };
-  setTimeout(function(){ window.confirm=orig; },0);
-},true);
 save();
 savePrices();
 saveStock();
