@@ -765,9 +765,8 @@ header .app-title-sub{display:none}   /* sem o nome "Richard Fernandes" (pedido 
   padding:16px 18px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.35)}
 .falta-box b{display:block;font-size:22px;font-weight:900;color:#c8102e;letter-spacing:.02em}
 .falta-box p{margin:6px 0 0;font-size:13px;font-weight:700;color:#5b4a45}
-.falta-box ul{list-style:none;margin:10px 0 0;padding:0;text-align:left}
-.falta-box li{margin:6px 0 0;font-size:14px;font-weight:800;color:#241a17;line-height:1.35}
-.falta-box li i{display:block;font-style:normal;font-size:11px;font-weight:900;color:#c8102e;letter-spacing:.04em}
+.falta-box strong{display:block;margin-top:12px;font-size:24px;font-weight:900;color:#241a17;line-height:1.2}
+.falta-box i{display:block;margin-top:4px;font-style:normal;font-size:12px;font-weight:900;color:#c8102e;letter-spacing:.05em}
 .falta-box button{position:sticky;bottom:0;margin-top:14px;min-height:44px;width:100%;border:0;border-radius:12px;background:#c8102e;color:#fff;
   font:inherit;font-size:16px;font-weight:900;box-shadow:0 -8px 12px #fff}
 </style>
@@ -2978,7 +2977,7 @@ document.addEventListener('click',function(e){
 });
 
 /* 30/10: o vendedor tem que abrir todas as seções */
-var SEC_KEY='prop_secoes_v1', secAbertas={};
+var SEC_KEY='prop_secoes_v1', secAbertas={}, secSilencio=false;
 try{ secAbertas=JSON.parse(localStorage.getItem(SEC_KEY)||'{}')||{}; }catch(e){ secAbertas={}; }
 function salvarSecoes(){ try{ localStorage.setItem(SEC_KEY,JSON.stringify(secAbertas)); }catch(e){} }
 var NOME_LOCAL={ILHA:'ILHA',GELADEIRA:'GELADEIRA',DEFUMADOS:'DEFUMADOS E MORTADELA',BALCAO:'BALCÃO'};
@@ -2994,28 +2993,33 @@ function secoesFaltando(local){
   for(var i=0;i<ds.length;i++) if((!local||secLocal(ds[i])===local) && !secAbertas[secId(ds[i])]) out.push(ds[i]);
   return out;
 }
-function mostrarFalta(lista,texto,fixo){
+/* mostra UMA seção por vez (pedido do Edmar: "um por um") */
+function mostrarFalta(d,texto,fixo){
   var t=document.getElementById('faltaSecao');
   if(!t){
     t=document.createElement('div'); t.id='faltaSecao'; t.className='falta-sec'; t.setAttribute('role','alert');
     t.addEventListener('click',function(e){ if(e.target===t||e.target.tagName==='BUTTON') t.classList.remove('show'); });
     document.body.appendChild(t);
   }
-  var grupos={}, ordem=[];
-  for(var i=0;i<lista.length;i++){
-    var l=secLocal(lista[i]); if(!grupos[l]){ grupos[l]=[]; ordem.push(l); } grupos[l].push(secNome(lista[i]));
-  }
-  var h='<div class="falta-box"><b>⚠️ FALTA ABRIR A SEÇÃO</b>'+(texto?'<p>'+texto+'</p>':'')+'<ul>';
-  for(var k=0;k<ordem.length;k++) h+='<li><i>'+(NOME_LOCAL[ordem[k]]||ordem[k])+'</i>'+grupos[ordem[k]].join(' · ')+'</li>';
-  t.innerHTML=h+'</ul><button type="button">OK</button></div>';
+  var l=secLocal(d);
+  t.innerHTML='<div class="falta-box"><b>⚠️ FALTA ABRIR A SEÇÃO</b><strong>'+secNome(d)+'</strong><i>'+(NOME_LOCAL[l]||l)+'</i>'+
+    (texto?'<p>'+texto+'</p>':'')+'<button type="button">OK</button></div>';
   clearTimeout(t._tm); t.classList.add('show');
-  if(!fixo) t._tm=setTimeout(function(){ t.classList.remove('show'); },4000);
+  if(!fixo) t._tm=setTimeout(function(){ t.classList.remove('show'); },3500);
+}
+/* próxima seção sem abrir no mesmo local: primeiro as de baixo, depois as de cima */
+function proximaFalta(d){
+  var f=secoesFaltando(secLocal(d)); if(!f.length) return null;
+  for(var i=0;i<f.length;i++) if(d.compareDocumentPosition(f[i]) & Node.DOCUMENT_POSITION_FOLLOWING) return f[i];
+  return f[0];
 }
 (function(){
   var ds=document.querySelectorAll('#catalog details.section');
   for(var i=0;i<ds.length;i++) ds[i].addEventListener('toggle',function(){
-    if(!this.open) return;
-    secAbertas[secId(this)]=1; salvarSecoes(); this.classList.add('sec-vista');
+    if(this.open){ secAbertas[secId(this)]=1; salvarSecoes(); this.classList.add('sec-vista'); return; }
+    if(secSilencio) return;
+    var p=proximaFalta(this);   /* fechou a seção: avisa a próxima que falta */
+    if(p) mostrarFalta(p,'',false);
   });
   marcarSecoes();
 })();
@@ -3024,7 +3028,7 @@ document.addEventListener('click',function(e){
   var b=e.target.closest?e.target.closest('.local-card'):null;
   if(!b||b.parentNode.classList.contains('aberto')) return;
   var f=secoesFaltando(b.parentNode.getAttribute('data-local'));
-  if(f.length) mostrarFalta(f,'',false);
+  if(f.length) mostrarFalta(f[0],'',false);
 });
 /* WhatsApp só depois de abrir todas */
 document.addEventListener('click',function(e){
@@ -3032,7 +3036,7 @@ document.addEventListener('click',function(e){
   var f=secoesFaltando('');
   if(!f.length) return;
   e.preventDefault(); e.stopPropagation();
-  mostrarFalta(f,'Abra todas as seções antes de enviar a proposta.',true);
+  mostrarFalta(f[0],'Abra todas as seções antes de enviar a proposta.',true);
 },true);
 /* Nova visita confirmada: zera as seções abertas */
 document.addEventListener('click',function(e){
@@ -3040,7 +3044,12 @@ document.addEventListener('click',function(e){
   var orig=window.confirm;
   window.confirm=function(m){
     var r=orig.call(window,m);
-    if(r){ secAbertas={}; salvarSecoes(); setTimeout(marcarSecoes,0); }
+    if(r){
+      secAbertas={}; salvarSecoes(); secSilencio=true;   /* fecha tudo sem disparar aviso */
+      var ds=document.querySelectorAll('#catalog details.section');
+      for(var i=0;i<ds.length;i++) ds[i].open=false;
+      setTimeout(function(){ marcarSecoes(); secSilencio=false; },400);
+    }
     return r;
   };
   setTimeout(function(){ window.confirm=orig; },0);
