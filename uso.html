@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Uso da Proposta</title>
+<style>
+:root{--red:#c8102e;--ink:#241a17;--muted:#74655f;--line:#ecdcd8;--bg:#f6f2ef;--ok:#16803c;--okbg:#e7f6ec;--zero:#fff1f2}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header{background:var(--red);color:#fff;padding:14px 16px 12px;text-align:center;position:sticky;top:0;z-index:5;box-shadow:0 3px 12px rgba(0,0,0,.15)}
+h1{margin:0;font-size:24px;font-weight:900;letter-spacing:.02em}
+.sub{margin-top:3px;font-size:12px;opacity:.85}
+.periodos{display:flex;gap:8px;justify-content:center;margin-top:10px}
+.periodos button{min-height:36px;padding:6px 14px;border:2px solid rgba(255,255,255,.85);border-radius:999px;background:transparent;color:#fff;font:inherit;font-weight:900;font-size:14px;cursor:pointer}
+.periodos button.on{background:#fff;color:var(--red)}
+main{max-width:900px;margin:0 auto;padding:14px 16px 40px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+.tile b{display:block;font-size:28px;font-weight:900;color:var(--red);font-variant-numeric:tabular-nums}
+.tile span{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.aviso{background:#fff8e1;border:1px solid #f2d27a;border-radius:12px;padding:10px 12px;font-size:13px;font-weight:700;margin-bottom:12px}
+.sup{background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:14px;overflow:hidden}
+.sup h2{margin:0;padding:10px 14px;background:#fff3f4;color:var(--red);font-size:16px;font-weight:900;display:flex;justify-content:space-between;align-items:baseline}
+.sup h2 small{font-size:12px;color:var(--muted);font-weight:800}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px 10px;border-top:1px solid var(--line);font-size:14px;text-align:left}
+th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:900;border-top:0}
+td.n,th.n{text-align:center;width:72px;font-variant-numeric:tabular-nums}
+td.n b{font-size:18px;font-weight:900}
+td.n.z b{color:var(--red)}
+td.n.ok b{color:var(--ok)}
+tr.zero td{background:var(--zero)}
+td.ult{font-size:12px;color:var(--muted);width:120px}
+td.nome b{font-weight:800}
+td.nome small{display:block;color:var(--muted);font-size:11px}
+.links{margin-top:22px}
+.links summary{cursor:pointer;font-weight:900;color:var(--red);font-size:15px;padding:10px 0}
+.lk{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
+.lk span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lk button{flex:none;min-height:34px;padding:4px 12px;border:1.5px solid var(--red);border-radius:10px;background:#fff;color:var(--red);font:inherit;font-weight:900;font-size:12px;cursor:pointer}
+.lk button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+@media(max-width:480px){h1{font-size:20px}.tile b{font-size:22px}th,td{padding:7px 6px;font-size:13px}td.n,th.n{width:54px}td.ult{width:86px;font-size:11px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>USO DA PROPOSTA DIGITAL</h1>
+  <div class="sub" id="atual">carregando…</div>
+  <div class="periodos" role="group" aria-label="Período">
+    <button type="button" data-p="hoje">Hoje</button>
+    <button type="button" data-p="7">7 dias</button>
+    <button type="button" data-p="mes" class="on">Mês</button>
+  </div>
+</header>
+<main>
+  <div class="tiles">
+    <div class="tile"><b id="tVend">–</b><span>vendedores usando</span></div>
+    <div class="tile"><b id="tAbriu">–</b><span>vezes que abriram</span></div>
+    <div class="tile"><b id="tEnviou">–</b><span>propostas enviadas</span></div>
+  </div>
+  <div id="aviso"></div>
+  <div id="lista"></div>
+  <details class="links"><summary>Links dos vendedores (para mandar a cada um)</summary><div id="links"></div></details>
+</main>
+<script>
+var URL_USO="https://script.google.com/macros/s/AKfycbz8B0I65VFqGBnRv7oPegFIhNi2a1EnvsX1ckd-yExxIaS_S6D3NVSSrzMscd0Qv9M5/exec", SITE="https://edmarr123.github.io/proposta-digital/", VEND={"15": ["WESLEY", "LEANDRO"], "85": ["CARLOS HENRIQUE", "LEANDRO"], "81": ["LOIOLA", "LEANDRO"], "83": ["MARCOS SILVA", "LEANDRO"], "192": ["LUCAS LEAL", "LEANDRO"], "649": ["WALLACE SOUSA", "LEANDRO"], "650": ["ANDRE WILKER", "LEANDRO"], "12": ["FABIANO", "FLAVIANE"], "471": ["ANTONIO EDVALD", "FLAVIANE"], "383": ["GABRIEL LOUREN", "FLAVIANE"], "377": ["CELISMAR", "FLAVIANE"], "657": ["YURI ENRIQUE", "FLAVIANE"], "796": ["HAMAURY SENA", "FLAVIANE"], "797": ["GLEIBSON B.", "FLAVIANE"], "738": ["MARCEL HENRIQU", "IDEGLAN"], "164": ["JOAO VITOR", "IDEGLAN"], "45": ["TIAGO", "IDEGLAN"], "428": ["TAUA F.", "IDEGLAN"], "439": ["GUILHERME AUGU", "IDEGLAN"], "622": ["HAMBER", "IDEGLAN"], "722": ["LUIZ GUSTAVO", "IDEGLAN"], "16": ["BERALDO", "LUCAS"], "398": ["UCLEIBSON", "LUCAS"], "723": ["JEAN PIERRE", "LUCAS"], "729": ["MARCELO ALVES", "LUCAS"], "467": ["IGOR SA", "LUCAS"], "644": ["ALBERTO SANTOS", "LUCAS"], "698": ["FERNANDO OLIVE", "LUCAS"], "42": ["PAULO RONAN", "RICHARD"], "334": ["JOAO GABRIEL", "RICHARD"], "806": ["MARCIO GABRIEL", "RICHARD"], "473": ["KAIKY DIAS", "RICHARD"], "751": ["JULIO CESAR", "RICHARD"], "679": ["RAFAEL COSTA", "RICHARD"], "802": ["SUBSTITUTO", "RICHARD"], "687": ["EDREY MARTINS", "RICHARD"], "47": ["MARCELO", "RODRIGO"], "347": ["MATIAS", "RODRIGO"], "357": ["LUCIANO", "RODRIGO"], "405": ["WILLIAN", "RODRIGO"], "561": ["THALLES VIEIRA", "RODRIGO"], "660": ["LUCAS", "RODRIGO"], "807": ["EDGARD MARLON", "RODRIGO"]}, ORDEM=["LEANDRO", "FLAVIANE", "IDEGLAN", "LUCAS", "RICHARD", "RODRIGO"];
+var eventos=[], periodo='mes';
+function inicio(p){
+  var d=new Date(); d.setHours(0,0,0,0);
+  if(p==='7') d.setDate(d.getDate()-6);
+  if(p==='mes') d.setDate(1);
+  return d;
+}
+function quando(dt){
+  if(!dt) return '—';
+  var h=new Date(); h.setHours(0,0,0,0);
+  var hm=dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  if(dt>=h) return 'hoje '+hm;
+  var o=new Date(h); o.setDate(o.getDate()-1);
+  if(dt>=o) return 'ontem '+hm;
+  return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+hm;
+}
+/* a planilha devolve a data como "Fri Oct 30 2026 17:29:02 GMT-0300 (...)"; lê sem depender do navegador */
+function lerData(v){
+  var m=/([A-Z][a-z]{2}) (\d{1,2}) (\d{4}) (\d{2}):(\d{2}):(\d{2}) GMT([+-])(\d{2})(\d{2})/.exec(String(v));
+  if(!m) return new Date(v);
+  var mes='JanFebMarAprMayJunJulAugSepOctNovDec'.indexOf(m[1])/3, sinal=m[7]==='-'?-1:1;
+  return new Date(Date.UTC(+m[3],mes,+m[2],+m[4]-sinal*m[8],+m[5]-sinal*m[9],+m[6]));
+}
+function render(){
+  var ini=inicio(periodo), c={};
+  for(var i=0;i<eventos.length;i++){
+    var e=eventos[i], dt=lerData(e[0]); if(isNaN(dt)||dt<ini) continue;
+    if(e[2]!=='abriu'&&e[2]!=='enviou') continue;
+    var r=String(e[1]||''); if(!c[r]) c[r]={a:0,e:0,ult:null};
+    if(e[2]==='abriu') c[r].a++; else if(e[2]==='enviou') c[r].e++;
+    if(!c[r].ult||dt>c[r].ult) c[r].ult=dt;
+  }
+  var usando=0, ta=0, te=0;
+  for(var k in c){ ta+=c[k].a; te+=c[k].e; if(k&&VEND[k]&&c[k].a) usando++; }
+  document.getElementById('tVend').textContent=usando+' de '+Object.keys(VEND).length;
+  document.getElementById('tAbriu').textContent=ta;
+  document.getElementById('tEnviou').textContent=te;
+  var grupos={};
+  for(var rca in VEND){ var s=VEND[rca][1]; (grupos[s]=grupos[s]||[]).push(rca); }
+  var sups=ORDEM.filter(function(s){return grupos[s];}).concat(Object.keys(grupos).filter(function(s){return ORDEM.indexOf(s)<0;}));
+  var h='';
+  sups.forEach(function(s){
+    var rs=grupos[s].slice().sort(function(x,y){
+      var a=c[x]||{a:0,e:0}, b=c[y]||{a:0,e:0}; return (b.e-a.e)||(b.a-a.a)||VEND[x][0].localeCompare(VEND[y][0]);
+    });
+    var ab=0,en=0; rs.forEach(function(r){ if(c[r]){ab+=c[r].a;en+=c[r].e;} });
+    h+='<section class="sup"><h2>SUP '+s+'<small>'+ab+(ab===1?' abertura · ':' aberturas · ')+en+(en===1?' envio':' envios')+'</small></h2><table><thead><tr><th>Vendedor</th><th class="n">Abriu</th><th class="n">Enviou</th><th>Último uso</th></tr></thead><tbody>';
+    rs.forEach(function(r){
+      var x=c[r]||{a:0,e:0,ult:null};
+      h+='<tr'+(x.a?'':' class="zero"')+'><td class="nome"><b>'+VEND[r][0]+'</b><small>RCA '+r+'</small></td>'+
+         '<td class="n'+(x.a?'':' z')+'"><b>'+x.a+'</b></td><td class="n'+(x.e?' ok':' z')+'"><b>'+x.e+'</b></td>'+
+         '<td class="ult">'+quando(x.ult)+'</td></tr>';
+    });
+    h+='</tbody></table></section>';
+  });
+  var semId=c['']||null, outros=Object.keys(c).filter(function(k){return k&&!VEND[k];});
+  if(semId||outros.length){
+    h+='<section class="sup"><h2>SEM LINK DE VENDEDOR<small>link geral ou código desconhecido</small></h2><table><tbody>';
+    if(semId) h+='<tr><td class="nome"><b>Link geral</b><small>sem ?rca=</small></td><td class="n"><b>'+semId.a+'</b></td><td class="n"><b>'+semId.e+'</b></td><td class="ult">'+quando(semId.ult)+'</td></tr>';
+    outros.forEach(function(k){ h+='<tr><td class="nome"><b>RCA '+k+'</b><small>fora da lista</small></td><td class="n"><b>'+c[k].a+'</b></td><td class="n"><b>'+c[k].e+'</b></td><td class="ult">'+quando(c[k].ult)+'</td></tr>'; });
+    h+='</tbody></table></section>';
+  }
+  document.getElementById('lista').innerHTML=h;
+}
+function links(){
+  var h='';
+  ORDEM.forEach(function(s){
+    for(var r in VEND) if(VEND[r][1]===s){
+      var u=SITE+'?rca='+r;
+      h+='<div class="lk"><span><b>'+VEND[r][0]+'</b> ('+s+') — '+u+'</span><button type="button" data-u="'+u+'">Copiar</button></div>';
+    }
+  });
+  var el=document.getElementById('links'); el.innerHTML=h;
+  el.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    var u=b.getAttribute('data-u');
+    var ok=function(){ b.textContent='Copiado'; b.classList.add('ok'); setTimeout(function(){ b.textContent='Copiar'; b.classList.remove('ok'); },1500); };
+    if(navigator.clipboard) navigator.clipboard.writeText(u).then(ok,function(){ prompt('Copie o link:',u); });
+    else prompt('Copie o link:',u);
+  });
+}
+function carregar(){
+  if(!URL_USO){ document.getElementById('atual').textContent='planilha de uso ainda não ligada'; render(); return; }
+  document.getElementById('atual').textContent='carregando…';
+  fetch(URL_USO+(URL_USO.indexOf('?')<0?'?':'&')+'t='+Date.now()).then(function(r){ return r.json(); }).then(function(d){
+    eventos=d||[];
+    document.getElementById('aviso').innerHTML='';
+    document.getElementById('atual').textContent='atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' · toque no título para atualizar';
+    render();
+  }).catch(function(){
+    document.getElementById('aviso').innerHTML='<div class="aviso">Não consegui ler a planilha de uso agora. Toque no título para tentar de novo.</div>';
+    document.getElementById('atual').textContent='sem conexão com a planilha';
+    render();
+  });
+}
+document.querySelector('.periodos').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  periodo=b.getAttribute('data-p');
+  [].forEach.call(this.querySelectorAll('button'),function(x){ x.classList.toggle('on',x===b); });
+  render();
+});
+document.querySelector('h1').addEventListener('click',carregar);
+links(); carregar();
+</script>
+</body>
+</html>

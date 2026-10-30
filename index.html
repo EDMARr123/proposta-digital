@@ -2960,6 +2960,30 @@ document.addEventListener('click',function(e){
   clearTimeout(t._tm); t.classList.add('show');
   t._tm=setTimeout(function(){ t.classList.remove('show'); },2000);
 });
+
+/* 30/10: link por vendedor (?rca=698) e contagem de uso — abriu / enviou — na planilha do Edmar */
+var URL_USO="https://script.google.com/macros/s/AKfycbz8B0I65VFqGBnRv7oPegFIhNi2a1EnvsX1ckd-yExxIaS_S6D3NVSSrzMscd0Qv9M5/exec";
+var VENDEDORES={"15":["WESLEY","LEANDRO"],"85":["CARLOS HENRIQUE","LEANDRO"],"81":["LOIOLA","LEANDRO"],"83":["MARCOS SILVA","LEANDRO"],"192":["LUCAS LEAL","LEANDRO"],"649":["WALLACE SOUSA","LEANDRO"],"650":["ANDRE WILKER","LEANDRO"],"12":["FABIANO","FLAVIANE"],"471":["ANTONIO EDVALD","FLAVIANE"],"383":["GABRIEL LOUREN","FLAVIANE"],"377":["CELISMAR","FLAVIANE"],"657":["YURI ENRIQUE","FLAVIANE"],"796":["HAMAURY SENA","FLAVIANE"],"797":["GLEIBSON B.","FLAVIANE"],"738":["MARCEL HENRIQU","IDEGLAN"],"164":["JOAO VITOR","IDEGLAN"],"45":["TIAGO","IDEGLAN"],"428":["TAUA F.","IDEGLAN"],"439":["GUILHERME AUGU","IDEGLAN"],"622":["HAMBER","IDEGLAN"],"722":["LUIZ GUSTAVO","IDEGLAN"],"16":["BERALDO","LUCAS"],"398":["UCLEIBSON","LUCAS"],"723":["JEAN PIERRE","LUCAS"],"729":["MARCELO ALVES","LUCAS"],"467":["IGOR SA","LUCAS"],"644":["ALBERTO SANTOS","LUCAS"],"698":["FERNANDO OLIVE","LUCAS"],"42":["PAULO RONAN","RICHARD"],"334":["JOAO GABRIEL","RICHARD"],"806":["MARCIO GABRIEL","RICHARD"],"473":["KAIKY DIAS","RICHARD"],"751":["JULIO CESAR","RICHARD"],"679":["RAFAEL COSTA","RICHARD"],"802":["SUBSTITUTO","RICHARD"],"687":["EDREY MARTINS","RICHARD"],"47":["MARCELO","RODRIGO"],"347":["MATIAS","RODRIGO"],"357":["LUCIANO","RODRIGO"],"405":["WILLIAN","RODRIGO"],"561":["THALLES VIEIRA","RODRIGO"],"660":["LUCAS","RODRIGO"],"807":["EDGARD MARLON","RODRIGO"]};
+var rcaUso=(function(){
+  var m=/[?&]rca=(\d+)/.exec(location.search), v=m?m[1]:null;
+  try{
+    if(v==='0'){ localStorage.removeItem('prop_rca_v1'); v=''; }
+    else if(v) localStorage.setItem('prop_rca_v1',v);
+    else v=localStorage.getItem('prop_rca_v1')||'';
+  }catch(e){ v=v||''; }
+  return v;
+})();
+function registrarUso(evento,produtos){
+  if(!URL_USO) return;
+  var info=VENDEDORES[rcaUso]||['',''];
+  var body=JSON.stringify({rca:rcaUso,nome:info[0],supervisor:info[1],evento:evento,produtos:produtos||'',aparelho:navigator.userAgent});
+  try{ if(navigator.sendBeacon && navigator.sendBeacon(URL_USO,new Blob([body],{type:'text/plain'}))) return; }catch(e){}
+  try{ fetch(URL_USO,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain'},body:body}); }catch(e){}
+}
+registrarUso('abriu');
+document.getElementById('sendText').addEventListener('click',function(){
+  var n=selectedCodes().length; if(n) registrarUso('enviou',n);
+});
 save();
 savePrices();
 saveStock();
