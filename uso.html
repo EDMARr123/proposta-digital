@@ -74,6 +74,8 @@ td.nome small{display:block;color:var(--muted);font-size:11px}
 <script>
 var URL_USO="https://script.google.com/macros/s/AKfycbz8B0I65VFqGBnRv7oPegFIhNi2a1EnvsX1ckd-yExxIaS_S6D3NVSSrzMscd0Qv9M5/exec", SITE="https://edmarr123.github.io/proposta-digital/", VEND={"15": ["WESLEY", "LEANDRO"], "85": ["CARLOS HENRIQUE", "LEANDRO"], "81": ["LOIOLA", "LEANDRO"], "83": ["MARCOS SILVA", "LEANDRO"], "192": ["LUCAS LEAL", "LEANDRO"], "649": ["WALLACE SOUSA", "LEANDRO"], "650": ["ANDRE WILKER", "LEANDRO"], "12": ["FABIANO", "FLAVIANE"], "471": ["ANTONIO EDVALDO", "FLAVIANE"], "383": ["GABRIEL LOURENCO", "FLAVIANE"], "377": ["CELISMAR", "FLAVIANE"], "657": ["YURI ENRIQUE", "FLAVIANE"], "796": ["HAMAURY SENA", "FLAVIANE"], "797": ["GLEIBSON B.", "FLAVIANE"], "738": ["MARCEL HENRIQUE", "IDEGLAN"], "164": ["JOAO VITOR", "IDEGLAN"], "45": ["TIAGO", "IDEGLAN"], "428": ["TAUA F.", "IDEGLAN"], "439": ["GUILHERME AUGUSTO", "IDEGLAN"], "622": ["HAMBER", "IDEGLAN"], "722": ["LUIZ GUSTAVO", "IDEGLAN"], "16": ["BERALDO", "LUCAS"], "398": ["UCLEIBSON", "LUCAS"], "723": ["JEAN PIERRE", "LUCAS"], "729": ["MARCELO ALVES", "LUCAS"], "467": ["IGOR SA", "LUCAS"], "644": ["ALBERTO SANTOS", "LUCAS"], "698": ["FERNANDO OLIVEIRA", "LUCAS"], "42": ["PAULO RONAN", "RICHARD"], "334": ["JOAO GABRIEL", "RICHARD"], "806": ["MARCIO GABRIEL", "RICHARD"], "473": ["KAIKY DIAS", "RICHARD"], "751": ["JULIO CESAR", "RICHARD"], "679": ["RAFAEL COSTA", "RICHARD"], "802": ["SUBSTITUTO", "RICHARD"], "687": ["EDREY MARTINS", "RICHARD"], "47": ["MARCELO", "RODRIGO"], "347": ["MATIAS", "RODRIGO"], "357": ["LUCIANO", "RODRIGO"], "405": ["WILLIAN", "RODRIGO"], "561": ["THALLES VIEIRA", "RODRIGO"], "660": ["LUCAS", "RODRIGO"], "807": ["EDGARD MARLON", "RODRIGO"]}, ORDEM=["LEANDRO", "FLAVIANE", "IDEGLAN", "LUCAS", "RICHARD", "RODRIGO"];
 var eventos=[], periodo='mes';
+/* ?sup=NOME mostra só a equipe desse supervisor (usado no slide do fechamento) */
+var SUP_FILTRO=(new URLSearchParams(location.search).get('sup')||'').toUpperCase(); if(ORDEM.indexOf(SUP_FILTRO)<0) SUP_FILTRO='';
 function inicio(p){
   var d=new Date(); d.setHours(0,0,0,0);
   if(p==='7') d.setDate(d.getDate()-6);
@@ -106,13 +108,14 @@ function render(){
     if(!c[r].ult||dt>c[r].ult) c[r].ult=dt;
   }
   var usando=0, ta=0, te=0;
-  for(var k in c){ ta+=c[k].a; te+=c[k].e; if(k&&VEND[k]&&c[k].a) usando++; }
-  document.getElementById('tVend').textContent=usando+' de '+Object.keys(VEND).length;
+  for(var k in c){ if(SUP_FILTRO&&!(VEND[k]&&VEND[k][1]===SUP_FILTRO)) continue; ta+=c[k].a; te+=c[k].e; if(k&&VEND[k]&&c[k].a) usando++; }
+  document.getElementById('tVend').textContent=usando+' de '+Object.keys(VEND).filter(function(r){return !SUP_FILTRO||VEND[r][1]===SUP_FILTRO;}).length;
   document.getElementById('tAbriu').textContent=ta;
   document.getElementById('tEnviou').textContent=te;
   var grupos={};
   for(var rca in VEND){ var s=VEND[rca][1]; (grupos[s]=grupos[s]||[]).push(rca); }
   var sups=ORDEM.filter(function(s){return grupos[s];}).concat(Object.keys(grupos).filter(function(s){return ORDEM.indexOf(s)<0;}));
+  if(SUP_FILTRO) sups=sups.filter(function(s){return s===SUP_FILTRO;});
   var h='';
   sups.forEach(function(s){
     var rs=grupos[s].slice().sort(function(x,y){
@@ -129,7 +132,7 @@ function render(){
     h+='</tbody></table></section>';
   });
   var semId=c['']||null, outros=Object.keys(c).filter(function(k){return k&&!VEND[k];});
-  if(semId||outros.length){
+  if(!SUP_FILTRO&&(semId||outros.length)){
     h+='<section class="sup"><h2>SEM LINK DE VENDEDOR<small>link geral ou código desconhecido</small></h2><table><tbody>';
     if(semId) h+='<tr><td class="nome"><b>Link geral</b><small>sem ?rca=</small></td><td class="n"><b>'+semId.a+'</b></td><td class="n"><b>'+semId.e+'</b></td><td class="ult">'+quando(semId.ult)+'</td></tr>';
     outros.forEach(function(k){ h+='<tr><td class="nome"><b>RCA '+k+'</b><small>fora da lista</small></td><td class="n"><b>'+c[k].a+'</b></td><td class="n"><b>'+c[k].e+'</b></td><td class="ult">'+quando(c[k].ult)+'</td></tr>'; });
@@ -152,6 +155,7 @@ function copiar(txt,b,rotulo){
 function links(){
   var h='';
   ORDEM.forEach(function(s){
+    if(SUP_FILTRO&&s!==SUP_FILTRO) return;
     var rs=Object.keys(VEND).filter(function(r){ return VEND[r][1]===s; });
     if(!rs.length) return;
     h+='<div class="lk-sup"><b>SUP '+s+'</b><button type="button" class="todos" data-todos="'+s+'">Copiar todos</button></div>';
